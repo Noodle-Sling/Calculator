@@ -25,7 +25,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import javax.swing.JInternalFrame;
 
-public class NumberAdditionUI extends JFrame {
+public class CalculatorUI extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField;
@@ -58,7 +58,7 @@ public class NumberAdditionUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					NumberAdditionUI frame = new NumberAdditionUI();
+					CalculatorUI frame = new CalculatorUI();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -70,7 +70,7 @@ public class NumberAdditionUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public NumberAdditionUI() {
+	public CalculatorUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 640, 406);
 		contentPane = new JPanel();
