@@ -71,7 +71,14 @@ public class TriangleCalculator {
 		if(A.signum() <= 0 && a.signum() > 0 && b.signum() > 0 && c.signum() > 0) {
 			return new BigDecimal(Math.toDegrees(Math.acos((a.multiply(a).subtract(b.multiply(b).add(c.multiply(c)))).divide(b.multiply(c).multiply(new BigDecimal("-2")), MathContext.DECIMAL64).doubleValue())));
 		}
-		return A;
+		else return A;
+	}
+	
+	BigDecimal lawOfCosSides(BigDecimal a, BigDecimal b, BigDecimal c, BigDecimal A) {
+		if(a.signum() <= 0 && b.signum() > 0 && c.signum() > 0 && A.signum() > 0) {
+			return sqrt(b.pow(2).add(c.pow(2).add(a.multiply(b).multiply(new BigDecimal(Math.cos(A.doubleValue()) * 2)))), 64);
+		}
+		else return a;
 	}
 	
 	public void calculate() {
@@ -97,9 +104,9 @@ public class TriangleCalculator {
 	        angA = lawOfCosAngles(angA,sideA,sideB,sideC);
 	        angB = lawOfCosAngles(angB,sideB,sideC,sideA);
 	        angC = lawOfCosAngles(angC,sideC,sideB,sideA);
-	        //sideA = lawofcossides(sideA,sideB,sideC,angA);
-	        //sideB = lawofcossides(sideB,sideA,sideC,angB);
-	        //sideC = lawofcossides(sideC,sideB,sideA,angC);
+	        sideA = lawOfCosSides(sideA,sideB,sideC,angA);
+	        sideB = lawOfCosSides(sideB,sideA,sideC,angB);
+	        sideC = lawOfCosSides(sideC,sideB,sideA,angC);
 		}
 		angA = angA.setScale(4, BigDecimal.ROUND_HALF_EVEN);
 		angB = angB.setScale(4, BigDecimal.ROUND_HALF_EVEN);
