@@ -29,25 +29,50 @@ public class SimpleCalculator {
     {
         StringBuilder output = new StringBuilder();
         Deque<String> stack  = new LinkedList<>();
+        
+        List <String> nums = new ArrayList<>();
+        int count = 0;
+        for(int i = 0; i < infix.length(); i++) {
+        	if(Character.isDigit(infix.charAt(i)) && i == infix.length()-1) {
+        		nums.add(infix.substring(i-count, i+1));
+        	}
+        	else if(Character.isDigit(infix.charAt(i))) {
+        		count++;
+        	}
+        	else {
+        		nums.add(infix.substring(i-count, i) + " ");
+        		nums.add(infix.substring(i, i+1) + " ");
+        		count = 0;
+        	}
+        }
+        for(int i = 0; i < nums.size(); i++) {
+        	if(nums.get(i).equals(" ")) {
+        		nums.remove(i);
+        	}
+        }
+        String infix2 = "";
+        for(int i = 0; i < nums.size(); i++) {
+        	infix2 += nums.get(i);
+        }
 
-        for (String token : infix.split("\\s")) {
-            // operator
+        for (String token : infix2.trim().split("\\s")) {
+            
             if (ops.containsKey(token)) {
                 while ( ! stack.isEmpty() && isHigherPrec(token, stack.peek()))
                     output.append(stack.pop()).append(' ');
                 stack.push(token);
 
-            // left parenthesis
+            
             } else if (token.equals("(")) {
                 stack.push(token);
 
-            // right parenthesis
+            
             } else if (token.equals(")")) {
                 while ( ! stack.peek().equals("("))
                     output.append(stack.pop()).append(' ');
                 stack.pop();
 
-            // digit
+            
             } else {
                 output.append(token).append(' ');
             }
