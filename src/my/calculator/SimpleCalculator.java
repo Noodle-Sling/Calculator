@@ -1,6 +1,7 @@
 package my.calculator;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.*;
 
 public class SimpleCalculator {
@@ -8,7 +9,7 @@ public class SimpleCalculator {
 	    
 	private enum Operator
     {
-        ADD(1), SUBTRACT(2), MULTIPLY(3), DIVIDE(4);
+        ADD(1), SUBTRACT(2), MULTIPLY(3), DIVIDE(4), TRIG(5);
         final int precedence;
         Operator(int p) { precedence = p; }
     }
@@ -18,11 +19,27 @@ public class SimpleCalculator {
         put("-", Operator.SUBTRACT);
         put("*", Operator.MULTIPLY);
         put("/", Operator.DIVIDE);
+        put("sin", Operator.TRIG);
+        put("cos", Operator.TRIG);
+        put("tan", Operator.TRIG);
+        put("csc", Operator.TRIG);
+        put("sec", Operator.TRIG);
+        put("cot", Operator.TRIG);
     }};
 
     private static boolean isHigherPrec(String op, String sub)
     {
         return (ops.containsKey(sub) && ops.get(sub).precedence >= ops.get(op).precedence);
+    }
+    
+    private static boolean isAlpha(String str) {
+    	char[] ch = str.toCharArray();
+    	for(char c : ch) {
+    		if(!Character.isLetter(c)) {
+    			return false;
+    		}
+    	}
+    	return true;
     }
 
     public static String postfix(String infix)
@@ -35,6 +52,17 @@ public class SimpleCalculator {
         for(int i = 0; i < infix.length(); i++) {
         	if(Character.isDigit(infix.charAt(i)) && i == infix.length()-1) {
         		nums.add(infix.substring(i-count, i+1));
+        	}
+        	else if(Character.isLetter(infix.charAt(i))) {
+        		int k = 0;
+        		for(int j = i; j < infix.length(); j++) {
+        			if(!Character.isLetter(infix.charAt(j))) {
+        				break;
+        			}
+        			k++;
+        		}
+        		nums.add(infix.substring(i, k));
+        		i += k-1;
         	}
         	else if(Character.isDigit(infix.charAt(i))) {
         		count++;
@@ -52,7 +80,7 @@ public class SimpleCalculator {
         }
         String infix2 = "";
         for(int i = 0; i < nums.size(); i++) {
-        	infix2 += nums.get(i);
+        	infix2 += nums.get(i) + " ";
         }
 
         for (String token : infix2.trim().split("\\s")) {
@@ -83,6 +111,22 @@ public class SimpleCalculator {
 
         return output.toString();
     }
+    BigDecimal piCalc() {
+    	int count = 1000000;
+    	BigDecimal pi = BigDecimal.ZERO;
+    	BigDecimal denominator = BigDecimal.ONE;
+    	for(int i = 0; i < count; i++) {
+    		if(i % 2 == 0) {
+    			pi = pi.add(BigDecimal.ONE.divide(denominator, MathContext.DECIMAL64));
+    		}
+    		else {
+    			pi = pi.subtract(BigDecimal.ONE.divide(denominator, MathContext.DECIMAL64));
+    		}
+    		denominator = denominator.add(new BigDecimal("2"));
+    	}
+    	pi = pi.multiply(new BigDecimal("4"));
+    	return pi;
+    }
 	    
 	String[] convertToArray(String str) {
 		int count = 0;
@@ -104,7 +148,7 @@ public class SimpleCalculator {
 		System.out.println(expr);
 		System.out.println("Input\tOperation\tStack after");
 		
-		for (String token : expr.split("\\s+")) {
+		for (String token : expr.trim().split("\\s+")) {
 		    System.out.print(token + "\t");
 		    switch (token) {
 		        case "+":
@@ -127,8 +171,36 @@ public class SimpleCalculator {
 		        case "^":
 		            System.out.print("Operate\t\t");
 		            double exponent = stack.pop().doubleValue();
-		            stack.push((stack.pop().pow((int)exponent)));
+		            stack.push(stack.pop().pow((int)exponent));
 		            break;
+		        case "sin":
+		        	System.out.print("Operate\t\t");
+		        	stack.push(new BigDecimal(Math.sin(Math.toRadians(stack.pop().doubleValue()))));
+		        	break;
+		        case "cos":
+		        	System.out.print("Operate\t\t");
+		        	stack.push(new BigDecimal(Math.cos(Math.toRadians(stack.pop().doubleValue()))));
+		        	break;
+		        case "tan":
+		        	System.out.print("Operate\t\t");
+		        	stack.push(new BigDecimal(Math.tan(Math.toRadians(stack.pop().doubleValue()))));
+		        	break;
+		        case "csc":
+		        	System.out.print("Operate\t\t");
+		        	stack.push(new BigDecimal(1.0 / (Math.sin(Math.toRadians(stack.pop().doubleValue())))));
+		        	break;
+		        case "sec":
+		        	System.out.print("Operate\t\t");
+		        	stack.push(new BigDecimal(1.0 / (Math.cos(Math.toRadians(stack.pop().doubleValue())))));
+		        	break;
+		        case "cot":
+		        	System.out.print("Operate\t\t");
+		        	stack.push(new BigDecimal(1.0 / (Math.tan(Math.toRadians(stack.pop().doubleValue())))));
+		        	break;
+		        case "pi":
+		        	System.out.print("Push\t\t");
+		        	stack.push(piCalc().setScale(64, BigDecimal.ROUND_HALF_EVEN));
+		        	break;
 		        default:
 		            System.out.print("Push\t\t");
 		            stack.push(new BigDecimal(Double.parseDouble(token)));
@@ -145,7 +217,7 @@ public class SimpleCalculator {
     BigDecimal solve(String str) {
     	
     	String prn = postfix(str);
-    	BigDecimal result = compute(prn);
+    	BigDecimal result = compute(prn).setScale(4, BigDecimal.ROUND_HALF_EVEN);
     	return result;
     }
 }
