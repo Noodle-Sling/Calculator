@@ -49,7 +49,7 @@ public class CalculatorUI extends JFrame {
 	private JButton button;
 	private JButton button_1;
 	private JButton button_2;
-	private JLabel label_1;
+	private JLabel lblAnswer;
 
 	/**
 	 * Launch the application.
@@ -117,12 +117,12 @@ public class CalculatorUI extends JFrame {
 		gbc_lblThirdNumber.gridy = 4;
 		simpleCalculator.add(lblThirdNumber, gbc_lblThirdNumber);
 		
-		label_1 = new JLabel();
+		lblAnswer = new JLabel();
 		GridBagConstraints gbc_label_1 = new GridBagConstraints();
 		gbc_label_1.insets = new Insets(0, 0, 5, 0);
 		gbc_label_1.gridx = 2;
 		gbc_label_1.gridy = 4;
-		simpleCalculator.add(label_1, gbc_label_1);
+		simpleCalculator.add(lblAnswer, gbc_label_1);
 		
 		horizontalBox = Box.createHorizontalBox();
 		GridBagConstraints gbc_horizontalBox = new GridBagConstraints();
@@ -136,10 +136,10 @@ public class CalculatorUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				SimpleCalculator calc = new SimpleCalculator();
 				String str;
-				BigDecimal result;
+				String result;
 				str = textField.getText();
 				result = calc.solve(str);
-				label_1.setText(result.toPlainString());
+				lblAnswer.setText(result);
 			}
 		});
 			
@@ -149,7 +149,7 @@ public class CalculatorUI extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textField.setText("");
-				label_1.setText("");
+				lblAnswer.setText("");
 			}
 		});
 		horizontalBox.add(btnNewButton);

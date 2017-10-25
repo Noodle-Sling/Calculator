@@ -51,8 +51,15 @@ public class SimpleCalculator {
         List <String> nums = new ArrayList<>();
         int count = 0;
         for(int i = 0; i < infix.length(); i++) {
-        		if(Character.isDigit(infix.charAt(i)) && i == infix.length()-1) {
+        		if(infix.charAt(i) == ' ') {
+        			
+        		}
+        		else if(Character.isDigit(infix.charAt(i)) && i == infix.length()-1) {
         			nums.add(infix.substring(i-count, i+1));
+        		}
+        		else if(infix.charAt(i) == '-' && (i == 0 || (!Character.isDigit(infix.charAt(i-1)) && !nums.get(nums.size()-1).contains(")")))) {
+        			nums.add("-1 ");
+        			nums.add(" * ");
         		}
         		else if(i < infix.length()-1 && Character.isDigit(infix.charAt(i)) && Character.isLetter(infix.charAt(i+1))) {
         			nums.add(infix.substring(i-count, i+1) + " * ");
@@ -79,7 +86,7 @@ public class SimpleCalculator {
 	        		i += k-1;
         		}
         		
-        		else if(Character.isDigit(infix.charAt(i))) {
+        		else if(Character.isDigit(infix.charAt(i)) ||infix.charAt(i) == '.') {
         			count++;
         		}
         		else {
@@ -182,7 +189,7 @@ public class SimpleCalculator {
 		        case "/":
 		            System.out.print("Operate\t\t");
 		            BigDecimal divisor = stack.pop();
-		            stack.push(stack.pop().divide(divisor));
+		            stack.push(stack.pop().divide(divisor, MathContext.DECIMAL128));
 		            break;
 		        case "^":
 		            System.out.print("Operate\t\t");
@@ -280,19 +287,21 @@ public class SimpleCalculator {
 	
 	
 	    
-    BigDecimal solve(String str) {
+    String solve(String str) {
+    		str = str.replaceAll("\\s", "");
     		if(str.contains("=")) {
     			int equalIndex = str.indexOf("=");
-    			String movedOver = str.substring(0, equalIndex) + " - ( " + str.substring(equalIndex+1, str.length()) + " )";
+    			String movedOver = str.substring(0, equalIndex) + " +  - ( " + str.substring(equalIndex+1, str.length()) + " )";
+    			movedOver = movedOver.replaceAll("\\s", "");
     			String prn = postfix(movedOver);
     			System.out.println(prn);
     			BigDecimal result = algebra(prn).setScale(6, BigDecimal.ROUND_HALF_EVEN);
-    			return result;
+    			return "x = "  + result.toPlainString();
     		}
     		else {
 		    	String prn = postfix(str);
 		    	BigDecimal result = compute(prn).setScale(4, BigDecimal.ROUND_HALF_EVEN);
-		    	return result;
+		    	return result.toPlainString();
     		}
     }
 }
